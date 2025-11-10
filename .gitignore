@@ -399,3 +399,4 @@ cython_debug/
 !cats.mp4  # ← но ОСТАВИТЬ cats.mp4
 
 .vscode/
+.vscode/

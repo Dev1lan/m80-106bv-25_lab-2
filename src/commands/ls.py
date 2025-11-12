@@ -3,6 +3,32 @@ from pathlib import Path
 from core.path_utils import resolve_path
 
 
+def _parse_ls_args(args: list[str]) -> tuple[bool, str | None] | str:
+    """
+    Парсинг аргументов команды ls
+
+    Вход:
+        args: list[str] - список аргументов
+
+    Выход:
+        tuple[bool, str | None] | str - (detailed, path) или строка с ошибкой
+    """
+
+    detailed = False
+    path = None
+
+    for arg in args:
+        if arg.startswith('-'):
+            if arg == '-l':
+                detailed = True
+            else:
+                return f"ERROR: Incorrect option {arg}"
+        else:
+            path = arg
+
+    return detailed, path
+
+
 def ls(args: list[str]) -> str:
     """
     Главная функция команды ls
@@ -14,21 +40,13 @@ def ls(args: list[str]) -> str:
         str - отформатированная строка для вывода
     """
 
-    options: dict[str, bool | str | None] = {
-        "detailed": False,
-        "path": None
-    }
+    parsed_args = _parse_ls_args(args)
+    if isinstance(parsed_args, str):
+        return parsed_args
 
-    for arg in args:
-        if arg.startswith('-'):
-            if '-l' == arg:
-                options["detailed"] = True
-            else:
-                return f"ERROR: Incorrect option {arg}"
-        else:
-            options["path"] = arg
+    detailed, path = parsed_args
 
-    goal_path = resolve_path(options["path"], must_be=True, must_dir=True)
+    goal_path = resolve_path(path, must_be=True, must_dir=True)
     if goal_path is None:
         return "ERROR: Path does not exist or is not a directory"
 
@@ -38,11 +56,10 @@ def ls(args: list[str]) -> str:
     except PermissionError:
         return "ERROR: Permission denied"
 
-    if options["detailed"]:
+    if detailed:
         return _format_detailed_list(items)
     else:
         return _format_simple_list(items)
-
 
 
 def _format_simple_list(items: list[Path]) -> str:

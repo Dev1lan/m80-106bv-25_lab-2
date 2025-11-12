@@ -2,6 +2,39 @@ import shutil
 from core.path_utils import resolve_path
 
 
+def _parse_cp_args(args: list[str]) -> tuple[list[str], str, bool] | str:
+    """
+    Парсинг аргументов команды cp
+
+    Вход:
+        args: list[str] - список аргументов
+
+    Выход:
+        tuple[list[str], str, bool] | str - (sources, destination, recursive) или строка с ошибкой
+    """
+
+    sources: list[str] = []
+    recurs = False
+    destination = None
+
+    for arg in args:
+        if arg.startswith('-'):
+            if arg == '-r':
+                recurs = True
+            else:
+                return f"ERROR: Incorrect option {arg}"
+        else:
+            if destination is None and sources:
+                destination = arg
+            else:
+                sources.append(arg)
+
+    if not sources or destination is None:
+        return "ERROR: 'cp' requires source and destination"
+
+    return sources, destination, recurs
+
+
 def cp(args: list[str]) -> None | str:
     """
     Команда cp - копирование файлов и директорий
@@ -16,24 +49,11 @@ def cp(args: list[str]) -> None | str:
     if len(args) < 2:
         return "ERROR: 'cp' requires source and destination"
 
-    sources: list[str] = []
-    recurs = False
-    destination = None
+    parsed_args = _parse_cp_args(args)
+    if isinstance(parsed_args, str):
+        return parsed_args
 
-    for arg in args:
-        if arg.startswith('-'):
-            if '-r' == arg:
-                recurs = True
-            else:
-                return f"ERROR: Incorrect option {arg}"
-        else:
-            if destination is None and len(sources) > 0:
-                destination = arg
-            else:
-                sources.append(arg)
-
-    if not sources or destination is None:
-        return "ERROR: 'cp' requires source and destination"
+    sources, destination, recurs = parsed_args
 
     if len(sources) > 1:
         destination_path = resolve_path(destination, must_be=True, must_dir=True)

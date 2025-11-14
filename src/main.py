@@ -67,9 +67,7 @@ def main() -> None:
                 log_command(raw_input, False, err_msg)
 
 
-def do_command(
-    module: str, command: str, args: list[str], raw_input: str
-) -> str | None:
+def do_command(module: str, command: str, args: list[str], raw_input: str) -> str | None:
     """
     Выполнение команды
 
@@ -83,58 +81,31 @@ def do_command(
         str | None - результат выполнения команды или None
     """
 
-    try:
-        if module == "file_ops":
-            match command:
-                case "ls":
-                    result = ls(args)
-                    return str(result) if result is not None else None
-                case "cd":
-                    result = cd(args)
-                    if result is not None:
-                        log_command(raw_input, False, result)
-                    return str(result) if result is not None else None
-                case "cat":
-                    result = cat(args)
-                    return str(result) if result is not None else None
-                case "cp":
-                    result = cp(args)
-                    if result is not None:
-                        log_command(raw_input, False, result)
-                    return str(result) if result is not None else None
-                case "mv":
-                    result = mv(args)
-                    if result is not None:
-                        log_command(raw_input, False, result)
-                    return str(result) if result is not None else None
-                case "rm":
-                    result = rm(args)
-                    if result is not None:
-                        log_command(raw_input, False, result)
-                    return str(result) if result is not None else None
+    commands_map = {
+        "ls": lambda: ls(args),
+        "cat": lambda: cat(args),
+        "cd": lambda: cd(args),
+        "cp": lambda: cp(args),
+        "mv": lambda: mv(args),
+        "rm": lambda: rm(args),
+        "zip": lambda: zippig(args),
+        "unzip": lambda: unzipping(args),
+        "tar": lambda: tarring(args),
+        "untar": lambda: untarring(args),
+    }
 
-        elif module == "plugins":
-            match command:
-                case "zip":
-                    result = zippig(args)
-                    return str(result) if result is not None else None
-                case "unzip":
-                    result = unzipping(args)
-                    return str(result) if result is not None else None
-                case "tar":
-                    result = tarring(args)
-                    return str(result) if result is not None else None
-                case "untar":
-                    result = untarring(args)
-                    return str(result) if result is not None else None
+    error_log_commands = {"cd", "cp", "mv", "rm"}
 
-        elif module == "core" and command == "unknown":
-            err_msg = f"Неизвестная команда: {raw_input.split()[0]}"
-            log_command(raw_input, False, err_msg)
-            return err_msg
+    if command in commands_map:
+        result = commands_map[command]()
 
-    except Exception as err:
-        err_msg = f"Ошибка выполнения: {err}"
+        if command in error_log_commands and result is not None:
+            log_command(raw_input, False, result)
+
+        return str(result) if result is not None else None
+
+    elif module == "core" and command == "unknown":
+        err_msg = f"Неизвестная команда: {raw_input.split()[0]}"
         log_command(raw_input, False, err_msg)
         return err_msg
 

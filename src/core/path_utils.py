@@ -18,30 +18,34 @@ def resolve_path(
         Path | None - Path объект или None если путь невалидный
     """
 
-    if isinstance(path_arg, Path):
-        path = path_arg
-    elif path_arg is None:
-        path = Path.cwd()
-    elif path_arg == "~":
-        path = Path.home()
-    elif path_arg.startswith("~/"):
-        path = Path.home() / path_arg[2:]
-    else:
-        path = Path(path_arg)
+    try:
+        if isinstance(path_arg, Path):
+            path = path_arg
+        elif path_arg is None:
+            path = Path.cwd()
+        elif path_arg == "~":
+            path = Path.home()
+        elif path_arg.startswith("~/"):
+            path = Path.home() / path_arg[2:]
+        else:
+            path = Path(path_arg)
 
-    if not path.is_absolute():
-        path = Path.cwd() / path
+        if not path.is_absolute():
+            path = Path.cwd() / path
 
-    if must_be and not path.exists():
+        if must_be and not path.exists():
+            return None
+
+        if must_dir and not path.is_dir():
+            return None
+
+        if must_file and not path.is_file():
+            return None
+
+        return path
+
+    except OSError:
         return None
-
-    if must_dir and not path.is_dir():
-        return None
-
-    if must_file and not path.is_file():
-        return None
-
-    return path
 
 
 def is_safe_path(path: Path) -> bool:

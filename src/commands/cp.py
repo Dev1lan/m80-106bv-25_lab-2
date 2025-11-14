@@ -1,6 +1,6 @@
 import shutil
 from typing import Optional, Union, Tuple, List
-from core.path_utils import resolve_path
+from src.core.path_utils import resolve_path
 
 
 def _parse_cp_args(args: list[str]) -> Union[Tuple[List[str], str, bool], str]:
@@ -118,7 +118,7 @@ def _copy_item(source: str, destination: str, recursive: bool) -> Optional[str]:
         else:
             return f"ERROR: '{source}' is not a file or directory"
 
-    except Exception as err:
+    except (shutil.Error, OSError, IOError, PermissionError) as err:
         return f"ERROR: {str(err)}"
 
     return None

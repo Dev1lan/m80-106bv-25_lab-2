@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import Optional
-from core.path_utils import resolve_path, is_safe_path
+from src.core.path_utils import resolve_path, is_safe_path
 
 
 def mv(args: list[str]) -> Optional[str]:
@@ -75,9 +75,7 @@ def _move_item(source: str, destination: str) -> Optional[str]:
 
     parent_dir = resolve_path(str(destination_path.parent), must_be=True, must_dir=True)
     if parent_dir is None:
-        return (
-            f"ERROR: Destination directory '{destination_path.parent}' does not exist"
-        )
+        return f"ERROR: Destination directory '{destination_path.parent}' does not exist"
 
     try:
         if destination_path.exists():
@@ -91,7 +89,7 @@ def _move_item(source: str, destination: str) -> Optional[str]:
         else:
             source_path.rename(destination_path)
 
-    except Exception as e:
+    except (OSError, IOError, PermissionError) as e:
         return f"ERROR: {str(e)}"
 
     return None

@@ -1,7 +1,7 @@
 import datetime
 from pathlib import Path
 from typing import Optional, Union
-from core.path_utils import resolve_path
+from src.core.path_utils import resolve_path
 
 
 def _parse_ls_args(args: list[str]) -> Union[tuple[bool, Optional[str]], str]:
@@ -47,17 +47,15 @@ def ls(args: list[str]) -> str:
 
     detailed, path = parsed_args
 
-    goal_path = resolve_path(
-        path if path is not None else ".", must_be=True, must_dir=True
-    )
+    goal_path = resolve_path(path if path is not None else ".", must_be=True, must_dir=True)
     if goal_path is None:
         return "ERROR: Path does not exist or is not a directory"
 
     try:
         items = list(goal_path.iterdir())
         items.sort(key=lambda x: x.name.lower())
-    except PermissionError:
-        return "ERROR: Permission denied"
+    except (PermissionError, OSError) as err:
+        return f"ERROR: {str(err)}"
 
     if detailed:
         return _format_detailed_list(items)

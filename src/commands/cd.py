@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from typing import Optional
-from core.path_utils import resolve_path
+from src.core.path_utils import resolve_path
 
 
 def cd(args: list[str]) -> Optional[str]:
@@ -26,5 +26,5 @@ def cd(args: list[str]) -> Optional[str]:
     try:
         os.chdir(goal_path)
         return None
-    except Exception as err:
+    except (PermissionError, FileNotFoundError, OSError) as err:
         return f"ERROR: {str(err)}"

@@ -1,5 +1,4 @@
-from core.path_utils import resolve_path
-
+from src.core.path_utils import resolve_path
 
 def cat(args: list[str]) -> str:
     """
@@ -21,7 +20,12 @@ def cat(args: list[str]) -> str:
         return f"ERROR: File '{args[0]}' does not exist or is not a file"
 
     try:
-        content = file_path.read_text(encoding="utf-8")
-        return str(content)
-    except Exception as err:
+        content = file_path.read_text(encoding='utf-8')
+        return content
+
+    except UnicodeDecodeError:
+        file_size = file_path.stat().st_size
+        return f"BINARY FILE: {file_path.name} ({file_size} bytes)\nUse specialized tools to view binary files"
+
+    except (PermissionError, IOError, OSError) as err:
         return f"ERROR: {str(err)}"

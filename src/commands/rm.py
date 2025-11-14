@@ -80,7 +80,7 @@ def _remove_item(target: str, recursive: bool) -> None | str:
         else:
             return f"ERROR: '{target}' is not a file or directory"
 
-    except Exception as err:
+    except (OSError, PermissionError, shutil.Error) as err:
         return f"ERROR: {str(err)}"
 
     return None

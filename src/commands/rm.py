@@ -1,5 +1,5 @@
 import shutil
-from core.path_utils import resolve_path, is_safe_path
+from src.core.path_utils import resolve_path, is_safe_path
 
 
 def rm(args: list[str]) -> None | str:
@@ -20,8 +20,8 @@ def rm(args: list[str]) -> None | str:
     purposes = []
 
     for arg in args:
-        if arg.startswith('-'):
-            if '-r' == arg:
+        if arg.startswith("-"):
+            if "-r" == arg:
                 recursive = True
             else:
                 return f"ERROR: Incorrect option {arg}"
@@ -97,11 +97,11 @@ def _confirm_deletion(target_name: str) -> bool:
         bool - True если подтверждено, False если отменено
     """
 
-    print(f"Remove directory '{target_name}'? (y/n): ", end='', flush=True)
+    print(f"Remove directory '{target_name}'? (y/n): ", end="", flush=True)
 
     try:
         response = input().strip().lower()
-        return response in ['y', 'yes']
+        return response in ["y", "yes"]
     except (EOFError, KeyboardInterrupt):
         print("\nCancel")
         return False

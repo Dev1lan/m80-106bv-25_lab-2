@@ -1,3 +1,8 @@
+import sys
+import os
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import cv2
 from core.parser import parse_command, route_command
 from core.logger import setup_logging, log_command
@@ -8,7 +13,6 @@ from commands.cat import cat
 from commands.cp import cp
 from commands.mv import mv
 from commands.rm import rm
-
 
 
 def main() -> None:
@@ -32,7 +36,7 @@ def main() -> None:
             if parsed_data is None:
                 none_data_input_count += 1
                 if none_data_input_count == 20:
-                    print('Хватит уже просто нажимать на Enter!!!')
+                    print("Хватит уже просто нажимать на Enter!!!")
                     none_data_input_count = 0
                     continue
                 else:
@@ -59,11 +63,13 @@ def main() -> None:
         except Exception as err:
             err_msg = f"Критическая ошибка: {err}"
             print(err_msg)
-            if 'raw_input' in locals():
+            if "raw_input" in locals():
                 log_command(raw_input, False, err_msg)
 
 
-def do_command(module: str, command: str, args: list[str], raw_input: str) -> str | None:
+def do_command(
+    module: str, command: str, args: list[str], raw_input: str
+) -> str | None:
     """
     Выполнение команды
 
@@ -81,40 +87,46 @@ def do_command(module: str, command: str, args: list[str], raw_input: str) -> st
         if module == "file_ops":
             match command:
                 case "ls":
-                    return ls(args)
+                    result = ls(args)
+                    return str(result) if result is not None else None
                 case "cd":
                     result = cd(args)
                     if result is not None:
                         log_command(raw_input, False, result)
-                    return result
+                    return str(result) if result is not None else None
                 case "cat":
-                    return cat(args)
+                    result = cat(args)
+                    return str(result) if result is not None else None
                 case "cp":
                     result = cp(args)
                     if result is not None:
                         log_command(raw_input, False, result)
-                    return result
+                    return str(result) if result is not None else None
                 case "mv":
                     result = mv(args)
                     if result is not None:
                         log_command(raw_input, False, result)
-                    return result
+                    return str(result) if result is not None else None
                 case "rm":
                     result = rm(args)
                     if result is not None:
                         log_command(raw_input, False, result)
-                    return result
+                    return str(result) if result is not None else None
 
         elif module == "plugins":
             match command:
                 case "zip":
-                    return zippig(args)
+                    result = zippig(args)
+                    return str(result) if result is not None else None
                 case "unzip":
-                    return unzipping(args)
+                    result = unzipping(args)
+                    return str(result) if result is not None else None
                 case "tar":
-                    return tarring(args)
+                    result = tarring(args)
+                    return str(result) if result is not None else None
                 case "untar":
-                    return untarring(args)
+                    result = untarring(args)
+                    return str(result) if result is not None else None
 
         elif module == "core" and command == "unknown":
             err_msg = f"Неизвестная команда: {raw_input.split()[0]}"
@@ -128,6 +140,7 @@ def do_command(module: str, command: str, args: list[str], raw_input: str) -> st
 
     return None
 
+
 def koteki() -> None:
     """
     Функция для воспроизведения видео cats.mp4
@@ -138,14 +151,14 @@ def koteki() -> None:
     while True:
         ret, frame = cap.read()
         if ret:
-            cv2.imshow('Cats Video', frame)
-            if cv2.waitKey(25) & 0xFF == ord('q'):
+            cv2.imshow("Cats Video", frame)
+            if cv2.waitKey(25) & 0xFF == ord("q"):
                 break
         else:
             break
     cap.release()
     cv2.destroyAllWindows()
-    #со звуком не смог запустить, но если что могу в лс скинуть видео
+    # со звуком не смог запустить, но если что могу в лс скинуть видео
 
 
 if __name__ == "__main__":

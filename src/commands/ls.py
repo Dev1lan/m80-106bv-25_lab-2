@@ -1,9 +1,10 @@
 import datetime
 from pathlib import Path
+from typing import Optional, Union
 from core.path_utils import resolve_path
 
 
-def _parse_ls_args(args: list[str]) -> tuple[bool, str | None] | str:
+def _parse_ls_args(args: list[str]) -> Union[tuple[bool, Optional[str]], str]:
     """
     Парсинг аргументов команды ls
 
@@ -18,8 +19,8 @@ def _parse_ls_args(args: list[str]) -> tuple[bool, str | None] | str:
     path = None
 
     for arg in args:
-        if arg.startswith('-'):
-            if arg == '-l':
+        if arg.startswith("-"):
+            if arg == "-l":
                 detailed = True
             else:
                 return f"ERROR: Incorrect option {arg}"
@@ -46,7 +47,9 @@ def ls(args: list[str]) -> str:
 
     detailed, path = parsed_args
 
-    goal_path = resolve_path(path, must_be=True, must_dir=True)
+    goal_path = resolve_path(
+        path if path is not None else ".", must_be=True, must_dir=True
+    )
     if goal_path is None:
         return "ERROR: Path does not exist or is not a directory"
 

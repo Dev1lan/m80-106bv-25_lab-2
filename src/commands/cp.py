@@ -1,8 +1,9 @@
 import shutil
+from typing import Optional, Union, Tuple, List
 from core.path_utils import resolve_path
 
 
-def _parse_cp_args(args: list[str]) -> tuple[list[str], str, bool] | str:
+def _parse_cp_args(args: list[str]) -> Union[Tuple[List[str], str, bool], str]:
     """
     Парсинг аргументов команды cp
 
@@ -18,8 +19,8 @@ def _parse_cp_args(args: list[str]) -> tuple[list[str], str, bool] | str:
     destination = None
 
     for arg in args:
-        if arg.startswith('-'):
-            if arg == '-r':
+        if arg.startswith("-"):
+            if arg == "-r":
                 recurs = True
             else:
                 return f"ERROR: Incorrect option {arg}"
@@ -35,7 +36,7 @@ def _parse_cp_args(args: list[str]) -> tuple[list[str], str, bool] | str:
     return sources, destination, recurs
 
 
-def cp(args: list[str]) -> None | str:
+def cp(args: list[str]) -> Optional[str]:
     """
     Команда cp - копирование файлов и директорий
 
@@ -71,7 +72,7 @@ def cp(args: list[str]) -> None | str:
     return None
 
 
-def _copy_item(source: str, destination: str, recursive: bool) -> None | str:
+def _copy_item(source: str, destination: str, recursive: bool) -> Optional[str]:
     """
     Копирует один элемент (файл или директорию)
 
@@ -89,6 +90,9 @@ def _copy_item(source: str, destination: str, recursive: bool) -> None | str:
 
     if source_path is None:
         return f"ERROR: Source '{source}' does not exist"
+
+    if destination_path is None:
+        return f"ERROR: Invalid destination path '{destination}'"
 
     if destination_path.exists() and destination_path.is_dir():
         destination_path = destination_path / source_path.name

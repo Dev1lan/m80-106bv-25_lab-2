@@ -1,5 +1,6 @@
 import shlex
 
+
 def parse_command(user_input: str) -> tuple[str, list[str], str] | None:
     """
     Основной метод парсинга пользовательского ввода
@@ -28,7 +29,9 @@ def parse_command(user_input: str) -> tuple[str, list[str], str] | None:
         return ("error", [f"Parse error: {err}"], raw_input)
 
 
-def route_command(parsed_data: tuple[str, list[str], str]) -> tuple[str, str, list[str], str]:
+def route_command(
+    parsed_data: tuple[str, list[str], str],
+) -> tuple[str, str, list[str], str]:
     """
     Маршрутизатор команд - определяет модуль для выполнения команды
 

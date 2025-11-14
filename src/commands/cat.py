@@ -21,6 +21,7 @@ def cat(args: list[str]) -> str:
         return f"ERROR: File '{args[0]}' does not exist or is not a file"
 
     try:
-        return file_path.read_text(encoding='utf-8')
+        content = file_path.read_text(encoding="utf-8")
+        return str(content)
     except Exception as err:
         return f"ERROR: {str(err)}"

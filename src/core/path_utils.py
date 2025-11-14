@@ -1,6 +1,10 @@
 from pathlib import Path
+from typing import Optional
 
-def resolve_path(path_arg: str, must_be: bool = True, must_dir: bool = False, must_file: bool = False):
+
+def resolve_path(
+    path_arg: str, must_be: bool = True, must_dir: bool = False, must_file: bool = False
+) -> Optional[Path]:
     """
     Универсальная функция разрешения путей
 
@@ -16,7 +20,7 @@ def resolve_path(path_arg: str, must_be: bool = True, must_dir: bool = False, mu
 
     if isinstance(path_arg, Path):
         path = path_arg
-    if path_arg is None:
+    elif path_arg is None:
         path = Path.cwd()
     elif path_arg == "~":
         path = Path.home()

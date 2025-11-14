@@ -1,7 +1,8 @@
 import logging
 from pathlib import Path
 
-def setup_logging(log_file: str = "shell.log"):
+
+def setup_logging(log_file: str = "shell.log") -> None:
     """
     Настройка системы логирования
 
@@ -14,9 +15,10 @@ def setup_logging(log_file: str = "shell.log"):
     logging.basicConfig(
         filename=log_file,
         level=logging.INFO,
-        format='[%(asctime)s] %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'
+        format="[%(asctime)s] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
+
 
 def log_command(command: str, success: bool = True, error_msg: str = "") -> None:
     """

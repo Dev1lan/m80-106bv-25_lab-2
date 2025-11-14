@@ -23,17 +23,19 @@ def zippig(args: list[str]) -> str:
     if folder_path is None:
         return f"ERROR: Folder '{folder}' does not exist"
 
-    if not archive_name.endswith('.zip'):
-        archive_name += '.zip'
+    if not archive_name.endswith(".zip"):
+        archive_name += ".zip"
 
     archive_path = resolve_path(archive_name, must_be=False)
+    if archive_path is None:
+        return f"ERROR: Invalid archive path '{archive_name}'"
 
     try:
         shutil.make_archive(
-            base_name=str(archive_path.with_suffix('')),
-            format='zip',
+            base_name=str(archive_path.with_suffix("")),
+            format="zip",
             root_dir=folder_path.parent,
-            base_dir=folder_path.name
+            base_dir=folder_path.name,
         )
 
         return f"Created archive: {archive_path}"
@@ -65,7 +67,7 @@ def unzipping(args: list[str]) -> str:
     extract_dir = archive_path.parent / archive_path.stem
 
     try:
-        shutil.unpack_archive(archive_path, extract_dir, 'zip')
+        shutil.unpack_archive(archive_path, extract_dir, "zip")
         return f"Extracted to: {extract_dir}"
 
     except Exception as err:
@@ -93,17 +95,19 @@ def tarring(args: list[str]) -> str:
     if folder_path is None:
         return f"ERROR: Folder '{folder}' does not exist"
 
-    if not archive_name.endswith('.tar.gz'):
-        archive_name += '.tar.gz'
+    if not archive_name.endswith(".tar.gz"):
+        archive_name += ".tar.gz"
 
     archive_path = resolve_path(archive_name, must_be=False)
+    if archive_path is None:
+        return f"ERROR: Invalid archive path '{archive_name}'"
 
     try:
         shutil.make_archive(
-            base_name=str(archive_path.with_suffix('').with_suffix('')),  # без .tar.gz
-            format='gztar',
+            base_name=str(archive_path.with_suffix("").with_suffix("")),  # без .tar.gz
+            format="gztar",
             root_dir=folder_path.parent,
-            base_dir=folder_path.name
+            base_dir=folder_path.name,
         )
 
         return f"Created archive: {archive_path}"
@@ -131,10 +135,10 @@ def untarring(args: list[str]) -> str:
     if archive_path is None:
         return f"ERROR: Archive '{archive_name}' does not exist"
 
-    extract_dir = archive_path.parent / archive_path.name.replace('.tar.gz', '')
+    extract_dir = archive_path.parent / archive_path.name.replace(".tar.gz", "")
 
     try:
-        shutil.unpack_archive(archive_path, extract_dir, 'gztar')
+        shutil.unpack_archive(archive_path, extract_dir, "gztar")
         return f"Extracted to: {extract_dir}"
 
     except Exception as err:

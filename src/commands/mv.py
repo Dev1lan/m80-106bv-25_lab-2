@@ -1,8 +1,9 @@
 from pathlib import Path
+from typing import Optional
 from core.path_utils import resolve_path, is_safe_path
 
 
-def mv(args: list[str]) -> None | str:
+def mv(args: list[str]) -> Optional[str]:
     """
     Команда mv - перемещение или переименование файлов/каталогов
 
@@ -35,7 +36,7 @@ def mv(args: list[str]) -> None | str:
     return None
 
 
-def _move_item(source: str, destination: str) -> None | str:
+def _move_item(source: str, destination: str) -> Optional[str]:
     """
     Перемещает один элемент (файл или директорию)
 
@@ -52,6 +53,9 @@ def _move_item(source: str, destination: str) -> None | str:
 
     if source_path is None:
         return f"ERROR: Source '{source}' does not exist"
+
+    if destination_path is None:
+        return f"ERROR: Invalid destination path '{destination}'"
 
     if not is_safe_path(source_path):
         return f"ERROR: Cannot move system directory '{source}'"
@@ -71,7 +75,9 @@ def _move_item(source: str, destination: str) -> None | str:
 
     parent_dir = resolve_path(str(destination_path.parent), must_be=True, must_dir=True)
     if parent_dir is None:
-        return f"ERROR: Destination directory '{destination_path.parent}' does not exist"
+        return (
+            f"ERROR: Destination directory '{destination_path.parent}' does not exist"
+        )
 
     try:
         if destination_path.exists():
